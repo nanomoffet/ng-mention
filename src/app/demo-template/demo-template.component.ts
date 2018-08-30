@@ -12,6 +12,8 @@ export class DemoTemplateComponent {
     return `[${item.username}]`;
   }
 
+  items: string[] = ['Wes', 'Kent'];
+
   complexItems: any[] = COMMON_NAMES.map(name => {
     return {label: name, username: name.toLowerCase()};
   });

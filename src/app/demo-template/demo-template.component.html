@@ -1,11 +1,27 @@
-<h3>Template</h3>
-<p>Example showing how an Angular template can be used to customize the appearance of the mention list.</p>
-
+<h3>Default Position (slightly offset down/right from Cursor)</h3>
+<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'cursor'}"
+  [mentionListTemplate]="mentionListTemplate">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h3>Auto detect based on distance to the bottom of the window.</h3>
+<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 150}"
+  [mentionListTemplate]="mentionListTemplate">
+<br>
+<br>
+<br>
+<br>
 <ng-template #mentionListTemplate let-item="item">
   {{item.label}} <strong>({{item.username}})</strong>
 </ng-template>
 
-<h3>Input</h3>
-<input [mention]="complexItems" class="form-control" type="text"
-       [mentionConfig]="{mentionSelect: format}" 
-       [mentionListTemplate]="mentionListTemplate">
+<h3>Set position: above</h3>
+<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'above'}"
+  [mentionListTemplate]="mentionListTemplate">
+<!-- <input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 200, xPos: '-200', yPos: '300'}"
+  [mentionListTemplate]="mentionListTemplate"> -->
