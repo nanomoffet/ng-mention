@@ -106,7 +106,6 @@ export class MentionListComponent implements OnInit {
           el.style.top = (nativeParentElement.offsetTop -
             (offsetHeight < this.maxHeight && offsetHeight > 0 ? (offsetHeight + 42) : this.maxHeight)) - 6 + (yPos || 0) + 'px';
           el.style.left = nativeParentElement.offsetLeft + (xPos || 0) + 'px';
-          console.log(el.style.top);
           break;
         case 'below':
           // Offset the list from the parent offset height + the 

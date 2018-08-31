@@ -2,7 +2,7 @@ import { Directive, ElementRef, Input, ComponentFactoryResolver, ViewContainerRe
 import { EventEmitter, Output, OnInit, OnChanges, SimpleChanges } from "@angular/core";
 
 import { MentionListComponent } from './mention-list.component';
-import { getValue, insertValue, getCaretPosition, setCaretPosition } from './mention-utils';
+import { getValue, insertValue, getCaretPosition, setCaretPosition, getWordFromCaretPosition } from './mention-utils';
 
 const KEY_BACKSPACE = 8;
 const KEY_TAB = 9;
@@ -37,7 +37,7 @@ export class MentionDirective implements OnInit, OnChanges {
 
   @Input() set mentionConfig(config: any) {
     this.triggerChar = config.triggerChar || this.triggerChar;
-    this.keyCodeSpecified = typeof this.triggerChar === 'number'
+    this.keyCodeSpecified = typeof this.triggerChar === 'number';
     this.labelKey = config.labelKey || this.labelKey;
     this.disableSearch = config.disableSearch || this.disableSearch;
     this.maxItems = config.maxItems || this.maxItems;
@@ -284,6 +284,18 @@ export class MentionDirective implements OnInit, OnChanges {
           this.searchTerm.emit(this.searchString);
           this.updateSearchList(nativeElement);
         }
+      }
+    } else {
+      let wordFromCaretPosition = getWordFromCaretPosition(nativeElement);
+      if (wordFromCaretPosition.startsWith('@')) {
+        wordFromCaretPosition = wordFromCaretPosition.substring(1);
+        pos = getCaretPosition(nativeElement);
+        this.searchString = wordFromCaretPosition;
+        if (this.searchList) {
+          this.searchList.searchString = wordFromCaretPosition;
+        }
+        this.searchTerm.emit(this.searchString);
+        this.updateSearchList(nativeElement);
       }
     }
   }
