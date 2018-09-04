@@ -4,7 +4,7 @@
 <br>
 <br>
 <h3>Searching across Name and Username.</h3>
-<input [mention]="complexItemsWithDifferentUsernames" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 150, labelKey: 'username', filterKeys: ['label', 'username'], showListHeader: true}"
+<input [mention]="complexItemsWithDifferentUsernames" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', triggerChar: '$', maxHeight: 150, labelKey: 'username', filterKeys: ['label', 'username'], showListHeader: true}"
   [mentionListTemplate]="mentionListTemplate">
 <br>
 <br>

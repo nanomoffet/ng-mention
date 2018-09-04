@@ -301,7 +301,7 @@ export class MentionDirective implements OnInit, OnChanges {
       }
     } else {
       let wordFromCaretPosition = getWordFromCaretPosition(nativeElement);
-      if (wordFromCaretPosition.startsWith('@')) {
+      if (wordFromCaretPosition.startsWith(this.triggerChar.toString())) {
         wordFromCaretPosition = wordFromCaretPosition.substring(1);
         pos = getCaretPosition(nativeElement);
         let editStartPos = pos - wordFromCaretPosition.length;
@@ -426,6 +426,7 @@ export class MentionDirective implements OnInit, OnChanges {
       const componentFactory = this._componentResolver.resolveComponentFactory(MentionListComponent);
       const componentRef = this._viewContainerRef.createComponent(componentFactory);
       this.searchList = componentRef.instance;
+      this.searchList.triggerChar = this.triggerChar;
       this.searchList.maxHeight = this._maxHeight;
       this.searchList.minWidth = this._minWidth;
       this.searchList.maxWidth = this._maxWidth;

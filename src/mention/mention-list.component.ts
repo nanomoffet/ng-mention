@@ -35,7 +35,7 @@ import { getCaretCoordinates } from './caret-coords';
     </ng-template>
     <ul #list [hidden]="hidden" class="dropdown-menu scrollable-menu"
               [ngStyle]="{'max-height': maxHeight + 'px', 'min-width': minWidth + 'px', 'max-width': maxWidth + 'px', 'padding': 0}">
-        <li *ngIf="showListHeader" class="list-group-item disabled">People Matching "@{{searchString}}"</li>
+        <li *ngIf="showListHeader" class="list-group-item disabled">People Matching "{{triggerChar}}{{searchString}}"</li>
         <li *ngFor="let item of items; let i = index" [class.active]="activeIndex==i" [ngStyle]="{'height': listItemHeight + 'px'}">
             <a class="dropdown-item" (mousedown)="activeIndex=i;itemClick.emit();$event.preventDefault()">
               <ng-template [ngTemplateOutlet]="itemTemplate" [ngTemplateOutletContext]="{'item':item}"></ng-template>
@@ -53,6 +53,7 @@ export class MentionListComponent implements OnInit {
   items = [];
   activeIndex = 0;
   hidden = false;
+  public triggerChar: string | number;
   public maxHeight: number;
   public minWidth: number;
   public maxWidth: number;
