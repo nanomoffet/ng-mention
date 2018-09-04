@@ -41,7 +41,9 @@ export class MentionDirective implements OnInit, OnChanges {
     this.labelKey = config.labelKey || this.labelKey;
     this.disableSearch = config.disableSearch || this.disableSearch;
     this.maxItems = config.maxItems || this.maxItems;
+    this._filterKeys = config.filterKeys || this._filterKeys;
     this.mentionSelect = config.mentionSelect || this.mentionSelect;
+    this._showListHeader = config.showListHeader || this._showListHeader;
     this._maxHeight = config.maxHeight || this._maxHeight;
     this._minWidth = config.minWidth || this._minWidth;
     this._maxWidth = config.maxWidth || this._maxWidth;
@@ -69,6 +71,18 @@ export class MentionDirective implements OnInit, OnChanges {
 
   // option to limit the number of items shown in the pop-up menu
   private maxItems: number = -1;
+
+  /**
+   * : string[]
+   * Option to pass in multiple filter keys. For example, if you wish to filter by Full Name and username.
+   */
+  private _filterKeys: string[] = ['label'];
+
+  /**
+   * : boolean
+   * Option to show or hide the 'People Matching' bar at the top of the list.
+   */
+  private _showListHeader = false;
 
   /**
    * : number
@@ -290,12 +304,84 @@ export class MentionDirective implements OnInit, OnChanges {
       if (wordFromCaretPosition.startsWith('@')) {
         wordFromCaretPosition = wordFromCaretPosition.substring(1);
         pos = getCaretPosition(nativeElement);
-        this.searchString = wordFromCaretPosition;
-        if (this.searchList) {
-          this.searchList.searchString = wordFromCaretPosition;
+        let editStartPos = pos - wordFromCaretPosition.length;
+        if (event.keyCode !== KEY_SHIFT &&
+          !event.metaKey &&
+          !event.altKey &&
+          !event.ctrlKey &&
+          pos >= editStartPos
+        ) {
+          if (event.keyCode === KEY_SPACE) {
+            editStartPos = -1;
+          }
+          else if (event.keyCode === KEY_BACKSPACE && pos > 0) {
+            pos--;
+            if (pos === 0 || pos < editStartPos) {
+              this.stopSearch = true;
+            } else {
+              this.stopSearch = false;
+            }
+            this.searchList.hidden = this.stopSearch;
+            if (!this.stopSearch) {
+              this.searchString = wordFromCaretPosition.substring(0, wordFromCaretPosition.length - 1);
+              this.searchTerm.emit(this.searchString);
+              this.updateSearchList(nativeElement);
+            }
+          }
+          else if (!this.searchList.hidden) {
+            if (event.keyCode === KEY_TAB || event.keyCode === KEY_ENTER) {
+              this.stopEvent(event);
+              this.searchList.hidden = true;
+              // value is inserted without a trailing space for consistency
+              // between element types (div and iframe do not preserve the space)
+              insertValue(nativeElement, editStartPos - 1, pos,
+                this.mentionSelect(this.searchList.activeItem), this.iframe);
+              this.searchString = null;
+              this.searchList.searchString = null;
+              // fire input event so angular bindings are updated
+              if ('createEvent' in document) {
+                var evt = document.createEvent('HTMLEvents');
+                evt.initEvent("input", false, true);
+                nativeElement.dispatchEvent(evt);
+              }
+              editStartPos = -1;
+              return false;
+            }
+            else if (event.keyCode === KEY_ESCAPE) {
+              this.stopEvent(event);
+              this.searchList.hidden = true;
+              this.stopSearch = true;
+              return false;
+            }
+            else if (event.keyCode === KEY_DOWN) {
+              this.stopEvent(event);
+              this.searchList.activateNextItem();
+              return false;
+            }
+            else if (event.keyCode === KEY_UP) {
+              this.stopEvent(event);
+              this.searchList.activatePreviousItem();
+              return false;
+            } else {
+              let mention = wordFromCaretPosition;
+              if (event.keyCode !== KEY_BACKSPACE) {
+                mention += charPressed;
+              }
+              this.searchString = mention;
+              this.searchTerm.emit(this.searchString);
+              this.updateSearchList(nativeElement);
+            }
+          }
+          else {
+            let mention = wordFromCaretPosition;
+            if (event.keyCode !== KEY_BACKSPACE) {
+              mention += charPressed;
+            }
+            this.searchString = mention;
+            this.searchTerm.emit(this.searchString);
+            this.updateSearchList(nativeElement);
+          }
         }
-        this.searchTerm.emit(this.searchString);
-        this.updateSearchList(nativeElement);
       }
     }
   }
@@ -307,7 +393,15 @@ export class MentionDirective implements OnInit, OnChanges {
       // disabling the search relies on the async operation to do the filtering
       if (!this.disableSearch && this.searchString) {
         const searchStringLowerCase = this.searchString.toLowerCase();
-        objects = this.items.filter(e => e[this.labelKey].toLowerCase().startsWith(searchStringLowerCase));
+        objects = this.items.filter(e => {
+          let hasValue = false;
+          this._filterKeys.forEach(key => {
+            if (!hasValue) {
+              hasValue = e[key].toLowerCase().includes(searchStringLowerCase);
+            }
+          });
+          return hasValue;
+        });
       }
       matches = objects;
       if (this.maxItems > 0) {
@@ -318,7 +412,7 @@ export class MentionDirective implements OnInit, OnChanges {
     if (this.searchList) {
       this.searchList.items = matches;
       this.searchList.hidden = matches.length === 0;
-      if (this.searchString) {
+      if (this.searchString !== null) {
         this.searchList.searchString = this.searchString.toLowerCase();
       }
       if (nativeElement) {
@@ -336,6 +430,7 @@ export class MentionDirective implements OnInit, OnChanges {
       this.searchList.minWidth = this._minWidth;
       this.searchList.maxWidth = this._maxWidth;
       this.searchList.listItemHeight = this._listItemHeight;
+      this.searchList.showListHeader = this._showListHeader;
       this.searchList.searchString = null;
       this.searchList.position(nativeElement, this.iframe, this._positionType, this._xPos, this._yPos);
       this.searchList.itemTemplate = this.mentionListTemplate;

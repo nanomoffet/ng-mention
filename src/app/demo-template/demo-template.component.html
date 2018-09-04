@@ -3,14 +3,8 @@
   [mentionListTemplate]="mentionListTemplate">
 <br>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<h3>Auto detect based on distance to the bottom of the window.</h3>
-<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 150}"
+<h3>Searching across Name and Username.</h3>
+<input [mention]="complexItemsWithDifferentUsernames" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 150, labelKey: 'username', filterKeys: ['label', 'username'], showListHeader: true}"
   [mentionListTemplate]="mentionListTemplate">
 <br>
 <br>
@@ -21,7 +15,8 @@
 </ng-template>
 
 <h3>Set position: above</h3>
-<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'above'}"
+<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'above'}">
+<br>
+<h3>Set custom x and y offset values.</h3>
+<input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 200, xPos: '100', yPos: '-50'}"
   [mentionListTemplate]="mentionListTemplate">
-<!-- <input [mention]="complexItems" class="form-control" type="text" [mentionConfig]="{positionType: 'detect', maxHeight: 200, xPos: '-200', yPos: '300'}"
-  [mentionListTemplate]="mentionListTemplate"> -->
