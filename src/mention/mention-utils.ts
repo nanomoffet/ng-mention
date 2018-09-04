@@ -67,6 +67,12 @@ export function setCaretPosition(el: HTMLInputElement, pos: number, iframe: HTML
   }
 }
 
+export function getWordFromCaretPosition(el: HTMLInputElement) {
+  const caretPos = getCaretPosition(el);
+  const word = returnWord(el.value, caretPos);
+  return word;
+}
+
 export function getCaretPosition(el: HTMLInputElement, iframe: HTMLIFrameElement = null) {
   //console.log("getCaretPosition", el);
   if (isInputOrTextAreaElement(el)) {
@@ -80,6 +86,16 @@ export function getCaretPosition(el: HTMLInputElement, iframe: HTMLIFrameElement
       var position = selRange.startOffset;
       return position;
     }
+  }
+}
+
+export function returnWord(text, caretPos): string {
+  const preText = text.substring(0, caretPos);
+  if (preText.indexOf(' ') > 0) {
+      const words = preText.split(' ');
+      return words[words.length - 1]; // return last word
+  } else {
+      return preText.toString();
   }
 }
 
