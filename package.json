@@ -1,6 +1,6 @@
 {
-  "name": "fd-angular-mentions",
-  "version": "0.8.3",
+  "name": "@nanomoffet/angular-mentions",
+  "version": "0.0.1",
   "description": "Angular mentions for text fields.",
   "keywords": [
     "angular",
@@ -10,9 +10,9 @@
   "main": "src/mention/index.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dmacfarlane/angular-mentions.git"
+    "url": "https://github.com/nanomoffet/angular-mentions.git"
   },
-  "author": "Dan MacFarlane",
+  "author": "Michael Moffet",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {

@@ -3,8 +3,8 @@ import {
   TemplateRef, OnInit
 } from '@angular/core';
 
-import { isInputOrTextAreaElement, getContentEditableCaretCoords } from './mention-utils';
-import { getCaretCoordinates } from './caret-coords';
+import {isInputOrTextAreaElement, getContentEditableCaretCoords} from './mention-utils';
+import {getCaretCoordinates} from './caret-coords';
 
 /**
  * Angular 2 Mentions.
@@ -15,34 +15,34 @@ import { getCaretCoordinates } from './caret-coords';
 @Component({
   selector: 'mention-list',
   styles: [`
-      .scrollable-menu {
-        display: block;
-        height: auto;
-        overflow: auto;
-      }
-    `, `
-      [hidden] {
-        display: none;
-      }
-    `, `
-      li.active {
-        background-color: #f7f7f9;
-      }
-    `],
+    .scrollable-menu {
+      display: block;
+      height: auto;
+      overflow: auto;
+    }
+  `, `
+    [hidden] {
+      display: none;
+    }
+  `, `
+    li.active {
+      background-color: #f7f7f9;
+    }
+  `],
   template: `
     <ng-template #defaultItemTemplate let-item="item">
       {{item[labelKey]}}
     </ng-template>
     <ul #list [hidden]="hidden" class="dropdown-menu scrollable-menu"
-              [ngStyle]="{'max-height': maxHeight + 'px', 'min-width': minWidth + 'px', 'max-width': maxWidth + 'px', 'padding': 0}">
-        <li *ngIf="showListHeader" class="list-group-item disabled">People Matching "{{triggerChar}}{{searchString}}"</li>
-        <li *ngFor="let item of items; let i = index" [class.active]="activeIndex==i" [ngStyle]="{'height': listItemHeight + 'px'}">
-            <a class="dropdown-item" (mousedown)="activeIndex=i;itemClick.emit();$event.preventDefault()">
-              <ng-template [ngTemplateOutlet]="itemTemplate" [ngTemplateOutletContext]="{'item':item}"></ng-template>
-            </a>
-        </li>
+        [ngStyle]="{'max-height': maxHeight + 'px', 'min-width': minWidth + 'px', 'max-width': maxWidth + 'px', 'padding': 0}">
+      <li *ngIf="showListHeader" class="list-group-item disabled">People Matching "{{triggerChar}}{{searchString}}"</li>
+      <li *ngFor="let item of items; let i = index" [class.active]="activeIndex==i" [ngStyle]="{'height': listItemHeight + 'px'}">
+        <a class="dropdown-item" (mousedown)="activeIndex=i;itemClick.emit();$event.preventDefault()">
+          <ng-template [ngTemplateOutlet]="itemTemplate" [ngTemplateOutletContext]="{'item':item}"></ng-template>
+        </a>
+      </li>
     </ul>
-    `
+  `
 })
 export class MentionListComponent implements OnInit {
   @Input() labelKey: string = 'label';
@@ -60,7 +60,9 @@ export class MentionListComponent implements OnInit {
   public showListHeader: boolean;
   public listItemHeight: number;
   public searchString: string;
-  constructor(private _element: ElementRef) { }
+
+  constructor(private _element: ElementRef) {
+  }
 
   ngOnInit() {
     if (!this.itemTemplate) {
@@ -70,13 +72,13 @@ export class MentionListComponent implements OnInit {
 
   // lots of confusion here between relative coordinates and containers
   public position(nativeParentElement: HTMLInputElement, iframe: HTMLIFrameElement = null, position?: string,
-    xPos?: number, yPos?: number) {
-    let coords = { top: 0, left: 0 };
+                  xPos?: number, yPos?: number) {
+    let coords = {top: 0, left: 0};
     const el: HTMLElement = this._element.nativeElement;
     if (isInputOrTextAreaElement(nativeParentElement)) {
       this.updatePosition(nativeParentElement, position, this.items.length);
     } else if (iframe) {
-      const context: { iframe: HTMLIFrameElement, parent: Element } = { iframe: iframe, parent: iframe.offsetParent };
+      const context: { iframe: HTMLIFrameElement, parent: Element } = {iframe: iframe, parent: iframe.offsetParent};
       coords = getContentEditableCaretCoords(context);
     } else {
       const doc = document.documentElement;
@@ -84,7 +86,7 @@ export class MentionListComponent implements OnInit {
       const scrollTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
       // bounding rectangles are relative to view, offsets are relative to container?
-      const caretRelativeToView = getContentEditableCaretCoords({ iframe: iframe });
+      const caretRelativeToView = getContentEditableCaretCoords({iframe: iframe});
       const parentRelativeToContainer: ClientRect = nativeParentElement.getBoundingClientRect();
 
       coords.top = caretRelativeToView.top - parentRelativeToContainer.top + nativeParentElement.offsetTop - scrollTop;
@@ -96,7 +98,7 @@ export class MentionListComponent implements OnInit {
   }
 
   public updatePosition(nativeParentElement?: HTMLInputElement, position?: string, itemsLength?: number,
-    xPos?: number, yPos?: number): void {
+                        xPos?: number, yPos?: number): void {
     const el: HTMLElement = this._element.nativeElement;
     el.style.position = 'absolute';
     if (nativeParentElement && itemsLength) {
@@ -110,7 +112,7 @@ export class MentionListComponent implements OnInit {
           el.style.left = nativeParentElement.offsetLeft + (xPos || 0) + 'px';
           break;
         case 'below':
-          // Offset the list from the parent offset height + the 
+          // Offset the list from the parent offset height + the
           el.style.top = nativeParentElement.offsetTop + nativeParentElement.offsetHeight - 1 + (yPos || 0) + 'px';
           el.style.left = nativeParentElement.offsetLeft + (xPos || 0) + 'px';
           break;
@@ -142,7 +144,7 @@ export class MentionListComponent implements OnInit {
     let activeEl = listEl.getElementsByClassName('active').item(0);
     if (activeEl) {
       let nextLiEl: HTMLElement = <HTMLElement>activeEl.nextSibling;
-      if (nextLiEl && nextLiEl.nodeName == "LI") {
+      if (nextLiEl && nextLiEl.nodeName == 'LI') {
         let nextLiRect: ClientRect = nextLiEl.getBoundingClientRect();
         if (nextLiRect.bottom > listEl.getBoundingClientRect().bottom) {
           listEl.scrollTop = nextLiEl.offsetTop + nextLiRect.height - listEl.clientHeight;
@@ -159,7 +161,7 @@ export class MentionListComponent implements OnInit {
     let activeEl = listEl.getElementsByClassName('active').item(0);
     if (activeEl) {
       let prevLiEl: HTMLElement = <HTMLElement>activeEl.previousSibling;
-      if (prevLiEl && prevLiEl.nodeName == "LI") {
+      if (prevLiEl && prevLiEl.nodeName == 'LI') {
         let prevLiRect: ClientRect = prevLiEl.getBoundingClientRect();
         if (prevLiRect.top < listEl.getBoundingClientRect().top) {
           listEl.scrollTop = prevLiEl.offsetTop;

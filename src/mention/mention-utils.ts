@@ -90,7 +90,7 @@ export function getCaretPosition(el: HTMLInputElement, iframe: HTMLIFrameElement
 }
 
 export function returnWord(text, caretPos): string {
-  const preText = text.substring(0, caretPos);
+  const preText = text && text.substring(0, caretPos);
   if (preText.indexOf(' ') > 0) {
       const words = preText.split(' ');
       return words[words.length - 1]; // return last word
@@ -152,8 +152,8 @@ export function getContentEditableCaretCoords(ctx: { iframe: HTMLIFrameElement, 
 }
 
 function localToRelativeCoordinates(
-  ctx: { iframe: HTMLIFrameElement, parent?: Element }, 
-  element: Element, 
+  ctx: { iframe: HTMLIFrameElement, parent?: Element },
+  element: Element,
   coordinates: { top: number; left: number }
 ) {
   let obj = <HTMLElement>element;

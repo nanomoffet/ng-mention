@@ -197,7 +197,7 @@ export class MentionDirective implements OnInit, OnChanges {
     let pos = getCaretPosition(nativeElement, this.iframe);
     let charPressed = this.keyCodeSpecified ? event.keyCode : event.key;
     if (!charPressed) {
-      let charCode = event.which || event.keyCode;
+      var charCode = event.which || event.keyCode;
       if (!event.shiftKey && (charCode >= 65 && charCode <= 90)) {
         charPressed = String.fromCharCode(charCode + 32);
       }
@@ -209,13 +209,15 @@ export class MentionDirective implements OnInit, OnChanges {
         // http://stackoverflow.com/questions/2220196/how-to-decode-character-pressed-from-jquerys-keydowns-event-handler?lq=1
         charPressed = String.fromCharCode(event.which || event.keyCode);
       }
+    } else if (charPressed === 'Unidentified' && event.keyCode === 229) {
+      charPressed = val.charAt(pos - 1);
     }
     if (event.keyCode == KEY_ENTER && event.wasClick && pos < this.startPos) {
       // put caret back in position prior to contenteditable menu click
       pos = this.startNode.length;
       setCaretPosition(this.startNode, pos, this.iframe);
     }
-    //console.log("keyHandler", this.startPos, pos, val, charPressed, event);
+    // console.log("keyHandler", this.startPos, pos, val, charPressed, event);
     if (charPressed === this.triggerChar) {
       this.startPos = pos;
       this.startNode = (this.iframe ? this.iframe.contentWindow.getSelection() : window.getSelection()).anchorNode;
