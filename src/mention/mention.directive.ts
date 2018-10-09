@@ -292,7 +292,7 @@ export class MentionDirective implements OnInit, OnChanges {
           return false;
         }
         else {
-          let mention = val.substring(this.startPos + 1, pos);
+          let mention = val.substring(this.startPos, pos - 1);
           if (event.keyCode !== KEY_BACKSPACE) {
             mention += charPressed;
           }
