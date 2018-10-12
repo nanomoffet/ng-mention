@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, ComponentFactoryResolver, ViewContainerRef, TemplateRef } from "@angular/core";
 import { EventEmitter, Output, OnInit, OnChanges, SimpleChanges } from "@angular/core";
+import { Platform } from 'ionic-angular';
 
 import { MentionListComponent } from './mention-list.component';
 import { getValue, insertValue, getCaretPosition, setCaretPosition, getWordFromCaretPosition } from './mention-utils';
@@ -142,7 +143,8 @@ export class MentionDirective implements OnInit, OnChanges {
   constructor(
     private _element: ElementRef,
     private _componentResolver: ComponentFactoryResolver,
-    private _viewContainerRef: ViewContainerRef
+    private _viewContainerRef: ViewContainerRef,
+    private  platform : Platform
   ) { }
 
   ngOnInit() {
@@ -185,15 +187,23 @@ export class MentionDirective implements OnInit, OnChanges {
   }
 
   blurHandler(event: any) {
-    this.stopEvent(event);
-    this.stopSearch = true;
-    if (this.searchList) {
-      this.searchList.hidden = true;
+    if (this.getPlatform() !== 'iOS') {
+      this.stopEvent(event);
+      this.stopSearch = true;
+      if (this.searchList) {
+        this.searchList.hidden = true;
+      }
     }
   }
 
   keyHandler(event: any, nativeElement: HTMLInputElement = this._element.nativeElement) {
     let val: string = getValue(nativeElement);
+    if (val) {
+      val = val.trim();
+    }
+    if (this.getPlatform() === 'Android' && val.length > 0 && val.indexOf('@') === -1) {
+      return ;
+    }
     let pos = getCaretPosition(nativeElement, this.iframe);
     let charPressed = this.keyCodeSpecified ? event.keyCode : event.key;
     if (!charPressed) {
@@ -292,7 +302,12 @@ export class MentionDirective implements OnInit, OnChanges {
           return false;
         }
         else {
-          let mention = val.substring(this.startPos + 1, pos);
+          let mention;
+          if (this.getPlatform() === 'Android') {
+            mention = val.substring(this.startPos, pos - 1);
+          } else {
+            mention = val.substring(this.startPos + 1, pos);
+          }
           if (event.keyCode !== KEY_BACKSPACE) {
             mention += charPressed;
           }
@@ -386,6 +401,27 @@ export class MentionDirective implements OnInit, OnChanges {
         }
       }
     }
+  }
+
+  getPlatform() {
+    const userAgent = window.navigator.userAgent,
+      platform = window.navigator.platform,
+      macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+      windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+      iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+      let os = null;
+      if (macosPlatforms.indexOf(platform) !== -1) {
+      os = 'Mac OS';
+      } else if (iosPlatforms.indexOf(platform) !== -1) {
+        os = 'iOS';
+      } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        os = 'Windows';
+      } else if (/Android/.test(userAgent)) {
+        os = 'Android';
+      } else if (!os && /Linux/.test(platform)) {
+        os = 'Linux';
+      }
+      return os;
   }
 
   updateSearchList(nativeElement?: HTMLInputElement) {
