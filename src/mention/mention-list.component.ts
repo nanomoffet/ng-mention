@@ -68,6 +68,18 @@ export class MentionListComponent implements OnInit {
     if (!this.itemTemplate) {
       this.itemTemplate = this.defaultItemTemplate;
     }
+    document.addEventListener('click', (e: Event) => {
+      let target = e.target;
+
+      while (target && target.parentNode !== document) {
+        target = target.parentNode;
+        if (!target) { return; } // If element doesn't exist
+
+        if (target.classList.contains('dropdown-list-item')) {
+           this.itemClick();
+        }
+      }
+    });
   }
 
   // lots of confusion here between relative coordinates and containers
