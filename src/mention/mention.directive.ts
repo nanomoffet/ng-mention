@@ -1,6 +1,5 @@
 import { Directive, ElementRef, Input, ComponentFactoryResolver, ViewContainerRef, TemplateRef } from "@angular/core";
 import { EventEmitter, Output, OnInit, OnChanges, SimpleChanges } from "@angular/core";
-import { Platform } from 'ionic-angular';
 
 import { MentionListComponent } from './mention-list.component';
 import { getValue, insertValue, getCaretPosition, setCaretPosition, getWordFromCaretPosition } from './mention-utils';
@@ -143,8 +142,7 @@ export class MentionDirective implements OnInit, OnChanges {
   constructor(
     private _element: ElementRef,
     private _componentResolver: ComponentFactoryResolver,
-    private _viewContainerRef: ViewContainerRef,
-    private  platform : Platform
+    private _viewContainerRef: ViewContainerRef
   ) { }
 
   ngOnInit() {
