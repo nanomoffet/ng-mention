@@ -64,19 +64,23 @@ export class MentionListComponent implements OnInit {
   constructor(private _element: ElementRef) {
   }
 
+  getTarget(target) {
+    return target;
+  }
+
   ngOnInit() {
     if (!this.itemTemplate) {
       this.itemTemplate = this.defaultItemTemplate;
     }
     document.addEventListener('click', (e: Event) => {
-      let target = e.target;
+      let target = this.getTarget(e.target);
 
       while (target && target.parentNode !== document) {
         target = target.parentNode;
         if (!target) { return; } // If element doesn't exist
 
         if (target.classList.contains('dropdown-list-item')) {
-           this.itemClick();
+           this.itemClick.emit();
         }
       }
     });
